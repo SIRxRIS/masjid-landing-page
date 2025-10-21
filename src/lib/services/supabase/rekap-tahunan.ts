@@ -1,5 +1,5 @@
 // src/lib/services/supabase/rekap-tahunan.ts
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { getPengeluaranBulanan } from "./pengeluaran/pengeluaran";
 
 export interface RekapPemasukan {
@@ -114,7 +114,7 @@ function calculateMonthlyFromDate(
 export async function getRekapPemasukanTahunan(
   tahun: number,
 ): Promise<RekapPemasukan[]> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   try {
     console.log(`🔍 Mengambil data pemasukan untuk tahun: ${tahun}`);
@@ -405,7 +405,7 @@ export async function getRekapPemasukanTahunan(
 export async function getRekapPengeluaranTahunan(
   tahun: number,
 ): Promise<RekapPengeluaran[]> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   try {
     const { data: namaArray, error: namaError } = await supabase
@@ -504,7 +504,7 @@ export async function getPemasukanBulanan(
   tahun: number,
   bulan: number,
 ): Promise<number> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   try {
     let totalPemasukan = 0;
@@ -635,7 +635,7 @@ export async function getSaldoTahunan(tahun: number): Promise<number> {
   try {
     const totalPemasukan = await getPemasukanTahunan(tahun);
 
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
     const { data: pengeluaranData, error: pengeluaranError } = await supabase
       .from("Pengeluaran")
       .select("jumlah")

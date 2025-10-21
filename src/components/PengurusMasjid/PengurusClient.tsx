@@ -16,7 +16,7 @@ const PengurusClient = ({ pengurusData }: PengurusClientProps) => {
                 Pengurus Masjid Jawahiruzzarqa
               </h2>
               <p className="mb-12 text-base !leading-relaxed text-body-color dark:text-body-color-dark sm:text-lg md:text-xl">
-                Tim pengurus yang berdedikasi untuk melayani jamaah dan memakmurkan masjid 
+                Tim pengurus yang berdedikasi untuk melayani jamaah dan memakmurkan masjid
                 dengan penuh amanah dan tanggung jawab.
               </p>
             </div>
@@ -50,26 +50,6 @@ const PengurusClient = ({ pengurusData }: PengurusClientProps) => {
                       <p className="mb-4 text-sm text-body-color dark:text-body-color-dark">
                         Periode: {pengurus.periode}
                       </p>
-                    </div>
-
-                    {/* Contact Button */}
-                    <div className="text-center">
-                      <button className="inline-flex items-center justify-center rounded-md bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-white">
-                        <svg
-                          className="mr-2 h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                        Hubungi
-                      </button>
                     </div>
                   </div>
                 </div>

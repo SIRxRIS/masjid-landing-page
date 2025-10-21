@@ -1,5 +1,5 @@
 // src/lib/services/supabase/laporan-jumat-client.ts
-import { createClient } from "@/lib/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export interface LaporanJumatMetadata {
   id?: string;
@@ -23,40 +23,50 @@ export interface LaporanJumatMetadata {
 }
 
 /**
- * Get all public laporan Jumat for landing page (client-safe)
+ * Get all public laporan Jumat for landing page
+ * FIXED: Menggunakan supabaseAdmin karena dipanggil dari Server Component
  */
 export async function getPublicLaporanJumat(
   limit: number = 10,
-  offset: number = 0
-): Promise<{ success: boolean; data?: (LaporanJumatMetadata & { public_url: string })[]; error?: string }> {
+  offset: number = 0,
+): Promise<{
+  success: boolean;
+  data?: (LaporanJumatMetadata & { public_url: string })[];
+  error?: string;
+}> {
   try {
-    const supabase = createClient();
-    
+    // ✅ GANTI: createClient() → supabaseAdmin
+    const supabase = supabaseAdmin;
+
     const { data, error } = await supabase
-      .from('laporan_jumat_files')
-      .select('*')
-      .eq('is_public', true)
-      .order('tanggal', { ascending: false })
+      .from("laporan_jumat_files")
+      .select("*")
+      .eq("is_public", true)
+      .order("tanggal", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error('Fetch error:', error);
+      console.error("Fetch error:", error);
       return { success: false, error: error.message };
     }
 
     // Add public URLs
-    const reportsWithUrls = data.map(report => ({
+    const reportsWithUrls = data.map((report) => ({
       ...report,
-      public_url: supabase.storage.from('reports').getPublicUrl(report.file_path).data.publicUrl
+      public_url: supabase.storage
+        .from("reports")
+        .getPublicUrl(report.file_path).data.publicUrl,
     }));
 
     return { success: true, data: reportsWithUrls };
-
   } catch (error) {
-    console.error('Get public laporan error:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Terjadi kesalahan tidak dikenal' 
+    console.error("Get public laporan error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan tidak dikenal",
     };
   }
 }

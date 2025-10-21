@@ -1,7 +1,8 @@
 // src/actions/profile.ts
 "use server";
 
-import { createServerSupabaseClient } from "../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 type ProfileData = {
   nama: string;
@@ -12,7 +13,7 @@ type ProfileData = {
 };
 
 export async function setupProfile(data: ProfileData) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   // Cek user (lebih aman daripada session)
   const {
@@ -53,7 +54,7 @@ export async function setupProfile(data: ProfileData) {
 }
 
 export async function updateProfile(id: string, data: Partial<ProfileData>) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   // Cek user (lebih aman daripada session)
   const {
@@ -106,7 +107,7 @@ export async function updateProfile(id: string, data: Partial<ProfileData>) {
 }
 
 export async function uploadProfilePhoto(id: string, file: File) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   // Cek user (lebih aman daripada session)
   const {
@@ -171,7 +172,7 @@ export async function uploadProfilePhoto(id: string, file: File) {
     const arrayBuffer = await file.arrayBuffer();
 
     // Upload ke Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from("images")
       .upload(filePath, arrayBuffer, {
         contentType: file.type,
@@ -184,8 +185,8 @@ export async function uploadProfilePhoto(id: string, file: File) {
     }
 
     // Dapatkan URL publik file
-    const { data: publicUrl } = supabase.storage
-      .from("public")
+    const { data: publicUrl } = supabaseAdmin.storage
+      .from("images")
       .getPublicUrl(filePath);
 
     // Update profil dengan URL foto baru

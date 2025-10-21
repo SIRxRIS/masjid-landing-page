@@ -1,6 +1,5 @@
 import About from "@/components/About";
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import PengurusMasjid from "@/components/PengurusMasjid";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,7 +12,6 @@ const AboutPage = () => {
     <main>
       <Breadcrumb pageName="Tentang Kami" />
       <About />
-      <PengurusMasjid />
     </main>
   );
 };

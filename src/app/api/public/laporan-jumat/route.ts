@@ -1,33 +1,34 @@
 // src/app/api/public/laporan-jumat/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const offset = parseInt(searchParams.get('offset') || '0');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const offset = parseInt(searchParams.get("offset") || "0");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
-    const supabase = await createServerSupabaseClient();
-    let query = supabase
-      .from('laporan_jumat')
-      .select('*')
-      .eq('is_public', true)
-      .order('tanggal_laporan', { ascending: false })
+    let query = supabaseAdmin
+      .from("laporan_jumat")
+      .select("*")
+      .eq("is_public", true)
+      .order("tanggal_laporan", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (startDate && endDate) {
-      query = query.gte('tanggal_laporan', startDate).lte('tanggal_laporan', endDate);
+      query = query
+        .gte("tanggal_laporan", startDate)
+        .lte("tanggal_laporan", endDate);
     }
 
     const { data: reports, error } = await query;
 
     if (error) {
       return NextResponse.json(
-        { error: 'Failed to fetch reports', details: error.message },
-        { status: 500 }
+        { error: "Failed to fetch reports", details: error.message },
+        { status: 500 },
       );
     }
 
@@ -50,7 +51,7 @@ export async function GET(request: NextRequest) {
       imam: report.imam,
       ketuaPengurus: report.ketua_pengurus,
       bendahara: report.bendahara,
-      createdAt: report.created_at
+      createdAt: report.created_at,
     }));
 
     return NextResponse.json({
@@ -59,15 +60,14 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        total: publicReports?.length || 0
-      }
+        total: publicReports?.length || 0,
+      },
     });
-
   } catch (error) {
-    console.error('Error in public laporan-jumat API:', error);
+    console.error("Error in public laporan-jumat API:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -77,9 +77,9 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }

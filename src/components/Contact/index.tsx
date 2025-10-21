@@ -83,7 +83,7 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -92,9 +92,18 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      // Simulasi pengiriman email (dalam implementasi nyata, gunakan service seperti EmailJS atau API backend)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
       // Reset form setelah berhasil
       setFormData({
         fullName: "",
@@ -183,14 +192,14 @@ const Contact = () => {
               <h3 className="mb-8 text-2xl font-semibold text-dark dark:text-white md:text-[28px] md:leading-[1.42]">
                 Kirim Pesan Kepada Kami
               </h3>
-              
+
               {/* Status Messages */}
               {submitStatus === "success" && (
                 <div className="mb-6 rounded-lg bg-green-100 p-4 text-green-700 dark:bg-green-900 dark:text-green-300">
                   <p className="text-sm font-medium">✓ Pesan Anda berhasil dikirim! Kami akan segera menghubungi Anda.</p>
                 </div>
               )}
-              
+
               {submitStatus === "error" && (
                 <div className="mb-6 rounded-lg bg-red-100 p-4 text-red-700 dark:bg-red-900 dark:text-red-300">
                   <p className="text-sm font-medium">✗ Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.</p>
@@ -212,11 +221,10 @@ const Contact = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="Ahmad Hidayat"
-                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${
-                      errors.fullName 
-                        ? "border-red-500 focus:border-red-500" 
+                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${errors.fullName
+                        ? "border-red-500 focus:border-red-500"
                         : "border-[#f1f1f1] focus:border-primary dark:border-dark-3"
-                    }`}
+                      }`}
                   />
                   {errors.fullName && (
                     <p className="mt-2 text-sm text-red-500">{errors.fullName}</p>
@@ -236,11 +244,10 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="contoh@email.com"
-                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${
-                      errors.email 
-                        ? "border-red-500 focus:border-red-500" 
+                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${errors.email
+                        ? "border-red-500 focus:border-red-500"
                         : "border-[#f1f1f1] focus:border-primary dark:border-dark-3"
-                    }`}
+                      }`}
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-500">{errors.email}</p>
@@ -260,11 +267,10 @@ const Contact = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="0812-3456-7890"
-                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${
-                      errors.phone 
-                        ? "border-red-500 focus:border-red-500" 
+                    className={`w-full border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${errors.phone
+                        ? "border-red-500 focus:border-red-500"
                         : "border-[#f1f1f1] focus:border-primary dark:border-dark-3"
-                    }`}
+                      }`}
                   />
                   {errors.phone && (
                     <p className="mt-2 text-sm text-red-500">{errors.phone}</p>
@@ -284,11 +290,10 @@ const Contact = () => {
                     onChange={handleInputChange}
                     rows={4}
                     placeholder="Tulis pesan Anda di sini..."
-                    className={`w-full resize-none border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${
-                      errors.message 
-                        ? "border-red-500 focus:border-red-500" 
+                    className={`w-full resize-none border-0 border-b bg-transparent pb-3 text-dark placeholder:text-body-color/60 focus:outline-none dark:text-white ${errors.message
+                        ? "border-red-500 focus:border-red-500"
                         : "border-[#f1f1f1] focus:border-primary dark:border-dark-3"
-                    }`}
+                      }`}
                   ></textarea>
                   {errors.message && (
                     <p className="mt-2 text-sm text-red-500">{errors.message}</p>
@@ -298,11 +303,10 @@ const Contact = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`inline-flex items-center justify-center rounded-md px-10 py-3 text-base font-medium text-white transition duration-300 ease-in-out ${
-                      isSubmitting 
-                        ? "cursor-not-allowed bg-gray-400" 
+                    className={`inline-flex items-center justify-center rounded-md px-10 py-3 text-base font-medium text-white transition duration-300 ease-in-out ${isSubmitting
+                        ? "cursor-not-allowed bg-gray-400"
                         : "bg-primary hover:bg-primary/90"
-                    }`}
+                      }`}
                   >
                     {isSubmitting ? (
                       <>

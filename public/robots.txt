@@ -1,0 +1,5 @@
+# robots.txt to ensure search engines can crawl the site
+User-agent: *
+Allow: /
+
+Sitemap: https://masjidjawahiruzzarqa.siraf.my.id/sitemap.xml

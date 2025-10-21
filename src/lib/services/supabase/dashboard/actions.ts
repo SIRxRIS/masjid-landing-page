@@ -1,15 +1,15 @@
 // src/lib/supabase/dashboard/actions.ts
 "use server";
 
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 // Fungsi untuk mendapatkan total donasi bulanan - diimpor dari kode yang sudah ada
 export async function getDonasiBulananAction(
   tahun: number,
-  bulan: number
+  bulan: number,
 ): Promise<number> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
     const namaBulan = getBulanNameAction(bulan);
 
     const { data, error } = await supabase
@@ -75,7 +75,7 @@ export async function getDashboardDataLegacy(tahun: number, bulan: number) {
 // Fungsi untuk mendapatkan persentase pertumbuhan donasi (legacy)
 async function getPertumbuhanDonasiLegacy(
   tahun: number,
-  bulanIni: number
+  bulanIni: number,
 ): Promise<number> {
   try {
     // Menentukan bulan sebelumnya dan tahun sebelumnya
@@ -90,7 +90,7 @@ async function getPertumbuhanDonasiLegacy(
     const donasiBulanIni = await getDonasiBulananAction(tahun, bulanIni);
     const donasiBulanSebelumnya = await getDonasiBulananAction(
       tahunSebelumnya,
-      bulanSebelumnya
+      bulanSebelumnya,
     );
 
     // Menghitung persentase pertumbuhan
@@ -100,7 +100,7 @@ async function getPertumbuhanDonasiLegacy(
       (
         ((donasiBulanIni - donasiBulanSebelumnya) / donasiBulanSebelumnya) *
         100
-      ).toFixed(1)
+      ).toFixed(1),
     );
   } catch (error) {
     console.error("Error menghitung pertumbuhan donasi:", error);

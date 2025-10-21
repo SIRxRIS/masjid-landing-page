@@ -1,13 +1,13 @@
 // src/actions/pengurus.ts
 "use server";
 
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { deletePengurus } from "@/lib/services/supabase/pengurus";
 
 // Helper functions untuk server actions
 async function uploadFotoPengurus(file: File): Promise<string> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   const fileExt = file.name.split(".").pop();
   const fileName = `${Date.now()}.${fileExt}`;
@@ -32,7 +32,7 @@ async function uploadFotoPengurus(file: File): Promise<string> {
 }
 
 async function deleteOldFoto(fotoUrl: string) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await createClient();
 
   if (!fotoUrl) return;
   const path = fotoUrl.split("/public/")[1];
@@ -47,21 +47,24 @@ async function deleteOldFoto(fotoUrl: string) {
 // SERVER ACTION - Create pengurus
 export async function createPengurusAction(formData: FormData) {
   try {
-    const supabase = await createServerSupabaseClient();
-    
+    const supabase = await createClient();
+
     const pengurusData = {
       no: Number(formData.get("no")),
       nama: formData.get("nama") as string,
       jabatan: formData.get("jabatan") as string,
       periode: formData.get("periode") as string,
-      kategori: formData.get("kategori") as string || "MASJID",
+      kategori: (formData.get("kategori") as string) || "MASJID",
     };
 
     const file = formData.get("foto") as File | null;
 
     // Validasi
     if (!pengurusData.nama || !pengurusData.jabatan || !pengurusData.periode) {
-      return { success: false, error: "Nama, jabatan, dan periode harus diisi" };
+      return {
+        success: false,
+        error: "Nama, jabatan, dan periode harus diisi",
+      };
     }
 
     // Upload foto jika ada
@@ -92,7 +95,7 @@ export async function createPengurusAction(formData: FormData) {
 
     // Revalidate cache
     revalidatePath("/admin/manajemen/daftar-pengurus");
-    
+
     return { success: true, data: inserted[0] };
   } catch (error) {
     console.error("Create pengurus action error:", error);
@@ -103,15 +106,15 @@ export async function createPengurusAction(formData: FormData) {
 // SERVER ACTION - Update pengurus
 export async function updatePengurusAction(formData: FormData) {
   try {
-    const supabase = await createServerSupabaseClient();
-    
+    const supabase = await createClient();
+
     const id = Number(formData.get("id"));
     const updates = {
       no: Number(formData.get("no")),
       nama: formData.get("nama") as string,
       jabatan: formData.get("jabatan") as string,
       periode: formData.get("periode") as string,
-      kategori: formData.get("kategori") as string || "MASJID",
+      kategori: (formData.get("kategori") as string) || "MASJID",
     };
 
     const file = formData.get("foto") as File | null;
@@ -133,7 +136,7 @@ export async function updatePengurusAction(formData: FormData) {
       if (!oldDataError && oldData?.fotoUrl) {
         await deleteOldFoto(oldData.fotoUrl);
       }
-      
+
       fotoUrl = await uploadFotoPengurus(file);
     }
 
@@ -155,7 +158,7 @@ export async function updatePengurusAction(formData: FormData) {
 
     // Revalidate cache
     revalidatePath("/admin/manajemen/daftar-pengurus");
-    
+
     return { success: true, data: data[0] };
   } catch (error) {
     console.error("Update pengurus action error:", error);
@@ -174,12 +177,15 @@ export async function deletePengurusAction(id: number) {
     const result = await deletePengurus(id);
 
     if (!result.data) {
-      return { success: false, error: result.error || "Gagal menghapus pengurus" };
+      return {
+        success: false,
+        error: result.error || "Gagal menghapus pengurus",
+      };
     }
 
     // Revalidate cache
     revalidatePath("/admin/manajemen/daftar-pengurus");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Delete pengurus action error:", error);

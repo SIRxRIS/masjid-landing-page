@@ -1,7 +1,7 @@
 // src/lib/services/supabase/dashboard/dashboard.ts
 import { getPemasukanData } from "../pemasukan/pemasukan";
 import { getPengeluaranTahunan } from "../pengeluaran/pengeluaran";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { getTotalKotakAmal } from "../kotak-amal";
 import { getKotakAmalMasjidTahunan } from "../kotak-amal-masjid";
 import { getTotalKontenPublished } from "../konten";
@@ -23,17 +23,47 @@ export async function getDashboardData(tahun: number, bulan: number) {
     // Calculate total from all sources
     let totalPemasukan = 0;
     totalPemasukan += pemasukanData.donatur.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
     totalPemasukan += pemasukanData.kotakAmal.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
-    totalPemasukan += pemasukanData.donasiKhusus.reduce((total, item) => total + item.jumlah, 0);
-    totalPemasukan += pemasukanData.kotakAmalMasjid.reduce((total, item) => total + item.jumlah, 0);
+    totalPemasukan += pemasukanData.donasiKhusus.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
+    totalPemasukan += pemasukanData.kotakAmalMasjid.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
     const totalPengeluaran = await getPengeluaranTahunan(tahun);
 
     const jumlahDonatur = await getTotalDonatur(tahun);
@@ -61,7 +91,7 @@ export async function getDashboardData(tahun: number, bulan: number) {
     const pertumbuhanDanaTahunan = await getPertumbuhanDanaTahunan(tahun);
     const pertumbuhanDanaBulanan = await getPertumbuhanDanaBulanan(
       tahun,
-      bulan
+      bulan,
     );
 
     return {
@@ -90,7 +120,7 @@ export async function getDashboardData(tahun: number, bulan: number) {
 // Fungsi untuk mendapatkan jumlah total donatur aktif pada tahun tertentu
 async function getTotalDonatur(tahun: number): Promise<number> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
 
     const { count, error } = await supabase
       .from("Donatur")
@@ -112,10 +142,10 @@ async function getTotalDonatur(tahun: number): Promise<number> {
 // Fungsi untuk mendapatkan persentase pertumbuhan donatur
 async function getPertumbuhanDonatur(
   tahun: number,
-  bulanIni: number
+  bulanIni: number,
 ): Promise<number> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
 
     // Menentukan bulan sebelumnya dan tahun sebelumnya
     let bulanSebelumnya = bulanIni - 1;
@@ -160,7 +190,7 @@ async function getPertumbuhanDonatur(
       (
         ((donaturBulanIni - donaturBulanSebelumnya) / donaturBulanSebelumnya) *
         100
-      ).toFixed(1)
+      ).toFixed(1),
     );
   } catch (error) {
     console.error("Error menghitung pertumbuhan donatur:", error);
@@ -169,9 +199,12 @@ async function getPertumbuhanDonatur(
 }
 
 // Fungsi untuk mendapatkan total donasi bulanan
-export async function getDonasiBulanan(tahun: number, bulan: number): Promise<number> {
+export async function getDonasiBulanan(
+  tahun: number,
+  bulan: number,
+): Promise<number> {
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await createClient();
     const namaBulan = getBulanName(bulan);
 
     const { data, error } = await supabase
@@ -194,7 +227,7 @@ export async function getDonasiBulanan(tahun: number, bulan: number): Promise<nu
 // Fungsi untuk mendapatkan persentase pertumbuhan donasi
 export async function getPertumbuhanDonasi(
   tahun: number,
-  bulanIni: number
+  bulanIni: number,
 ): Promise<number> {
   try {
     // Menentukan bulan sebelumnya dan tahun sebelumnya
@@ -209,7 +242,7 @@ export async function getPertumbuhanDonasi(
     const donasiBulanIni = await getDonasiBulanan(tahun, bulanIni);
     const donasiBulanSebelumnya = await getDonasiBulanan(
       tahunSebelumnya,
-      bulanSebelumnya
+      bulanSebelumnya,
     );
 
     // Menghitung persentase pertumbuhan
@@ -219,7 +252,7 @@ export async function getPertumbuhanDonasi(
       (
         ((donasiBulanIni - donasiBulanSebelumnya) / donasiBulanSebelumnya) *
         100
-      ).toFixed(1)
+      ).toFixed(1),
     );
   } catch (error) {
     console.error("Error menghitung pertumbuhan donasi:", error);
@@ -254,38 +287,98 @@ async function getPertumbuhanDanaTahunan(tahun: number): Promise<number> {
     // Get data for current and previous year
     const [pemasukanDataIni, pemasukanDataLalu] = await Promise.all([
       getPemasukanData({ tahun }),
-      getPemasukanData({ tahun: tahun - 1 })
+      getPemasukanData({ tahun: tahun - 1 }),
     ]);
-    
+
     // Calculate totals for current year
     let pemasukanTahunIni = 0;
     pemasukanTahunIni += pemasukanDataIni.donatur.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
     pemasukanTahunIni += pemasukanDataIni.kotakAmal.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
-    pemasukanTahunIni += pemasukanDataIni.donasiKhusus.reduce((total, item) => total + item.jumlah, 0);
-    pemasukanTahunIni += pemasukanDataIni.kotakAmalMasjid.reduce((total, item) => total + item.jumlah, 0);
-    
+    pemasukanTahunIni += pemasukanDataIni.donasiKhusus.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
+    pemasukanTahunIni += pemasukanDataIni.kotakAmalMasjid.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
+
     // Calculate totals for previous year
     let pemasukanTahunLalu = 0;
     pemasukanTahunLalu += pemasukanDataLalu.donatur.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
     pemasukanTahunLalu += pemasukanDataLalu.kotakAmal.reduce((total, item) => {
-      return total + (item.jan || 0) + (item.feb || 0) + (item.mar || 0) + (item.apr || 0) +
-             (item.mei || 0) + (item.jun || 0) + (item.jul || 0) + (item.aug || 0) +
-             (item.sep || 0) + (item.okt || 0) + (item.nov || 0) + (item.des || 0);
+      return (
+        total +
+        (item.jan || 0) +
+        (item.feb || 0) +
+        (item.mar || 0) +
+        (item.apr || 0) +
+        (item.mei || 0) +
+        (item.jun || 0) +
+        (item.jul || 0) +
+        (item.aug || 0) +
+        (item.sep || 0) +
+        (item.okt || 0) +
+        (item.nov || 0) +
+        (item.des || 0)
+      );
     }, 0);
-    pemasukanTahunLalu += pemasukanDataLalu.donasiKhusus.reduce((total, item) => total + item.jumlah, 0);
-    pemasukanTahunLalu += pemasukanDataLalu.kotakAmalMasjid.reduce((total, item) => total + item.jumlah, 0);
+    pemasukanTahunLalu += pemasukanDataLalu.donasiKhusus.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
+    pemasukanTahunLalu += pemasukanDataLalu.kotakAmalMasjid.reduce(
+      (total, item) => total + item.jumlah,
+      0,
+    );
 
     // Jika tahun lalu tidak ada data, return 100% (pertumbuhan penuh)
     if (pemasukanTahunLalu === 0) return 100;
@@ -295,7 +388,7 @@ async function getPertumbuhanDanaTahunan(tahun: number): Promise<number> {
       (
         ((pemasukanTahunIni - pemasukanTahunLalu) / pemasukanTahunLalu) *
         100
-      ).toFixed(1)
+      ).toFixed(1),
     );
   } catch (error) {
     console.error("Error menghitung pertumbuhan dana tahunan:", error);
@@ -306,7 +399,7 @@ async function getPertumbuhanDanaTahunan(tahun: number): Promise<number> {
 // Fungsi untuk menghitung pertumbuhan dana bulanan
 async function getPertumbuhanDanaBulanan(
   tahun: number,
-  bulanIni: number
+  bulanIni: number,
 ): Promise<number> {
   try {
     // Tentukan bulan dan tahun sebelumnya
@@ -321,7 +414,7 @@ async function getPertumbuhanDanaBulanan(
     const pemasukanBulanIni = await getDonasiBulanan(tahun, bulanIni);
     const pemasukanBulanLalu = await getDonasiBulanan(
       tahunSebelumnya,
-      bulanSebelumnya
+      bulanSebelumnya,
     );
 
     if (pemasukanBulanLalu === 0) return 100;
@@ -330,7 +423,7 @@ async function getPertumbuhanDanaBulanan(
       (
         ((pemasukanBulanIni - pemasukanBulanLalu) / pemasukanBulanLalu) *
         100
-      ).toFixed(1)
+      ).toFixed(1),
     );
   } catch (error) {
     console.error("Error menghitung pertumbuhan dana bulanan:", error);

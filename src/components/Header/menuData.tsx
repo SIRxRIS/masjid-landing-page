@@ -20,8 +20,8 @@ const menuData: Menu[] = [
       },
       {
         id: 22,
-        title: "Visi Misi",
-        path: "/visi-misi",
+        title: "Program Kerja",
+        path: "/program-kerja",
         newTab: false,
       },
       {
@@ -54,6 +54,12 @@ const menuData: Menu[] = [
     id: 6,
     title: "Kontak",
     path: "/contact",
+    newTab: false,
+  },
+  {
+    id: 7,
+    title: "Peta Situs",
+    path: "/sitemap",
     newTab: false,
   },
 ];

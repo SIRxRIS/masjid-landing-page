@@ -1,28 +1,27 @@
 // src/app/api/public/laporan-jumat/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    
+
     // Get specific public report by ID
-    const { data: report, error } = await supabase
-      .from('laporan_jumat')
-      .select('*')
-      .eq('id', id)
-      .eq('is_public', true)
+    const { data: report, error } = await supabaseAdmin
+      .from("laporan_jumat")
+      .select("*")
+      .eq("id", id)
+      .eq("is_public", true)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         return NextResponse.json(
-          { error: 'Report not found or not public' },
-          { status: 404 }
+          { error: "Report not found or not public" },
+          { status: 404 },
         );
       }
       throw error;
@@ -47,19 +46,18 @@ export async function GET(
       imam: report.imam,
       ketuaPengurus: report.ketua_pengurus,
       bendahara: report.bendahara,
-      createdAt: report.created_at
+      createdAt: report.created_at,
     };
 
     return NextResponse.json({
       success: true,
-      data: publicReport
+      data: publicReport,
     });
-
   } catch (error) {
-    console.error('Error fetching specific report:', error);
+    console.error("Error fetching specific report:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -69,9 +67,9 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }
