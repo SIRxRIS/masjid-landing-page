@@ -46,27 +46,26 @@ export interface PrayerScheduleResponse {
   };
 }
 
-const API_BASE_URL = 'https://api.myquran.com/v1/sholat/jadwal';
-const CITY_ID = '741'; // Makassar
+const API_BASE_URL = "/api/prayer-times";
+const CITY_ID = "741"; // Makassar
 
 export class PrayerTimesService {
   /**
    * Fetch today's prayer times for Makassar
-   * Returns fallback data if API is unavailable
+   * Returns fallback data jika API tidak tersedia
    */
   static async getTodayPrayerTimes(): Promise<PrayerTime> {
     try {
-      // Set a timeout for the fetch request
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch(`${API_BASE_URL}/${CITY_ID}/hariini`, {
-        method: 'GET',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        cache: 'no-cache', // Changed to no-cache to avoid stale data
-        signal: controller.signal
+        cache: "no-store",
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -78,7 +77,7 @@ export class PrayerTimesService {
       const data: PrayerScheduleResponse = await response.json();
 
       if (!data.status || !data.data) {
-        throw new Error('Invalid response format');
+        throw new Error("Invalid response format");
       }
 
       return {
@@ -92,32 +91,40 @@ export class PrayerTimesService {
         isya: data.data.jadwal.isya,
       };
     } catch (error) {
-      console.warn('API tidak tersedia, menggunakan jadwal fallback untuk Makassar:', error);
-      // Return fallback data instead of null to prevent errors
+      console.warn(
+        "API tidak tersedia, menggunakan jadwal fallback untuk Makassar:",
+        error,
+      );
       return this.getFallbackPrayerTimes();
     }
   }
 
   /**
    * Fetch prayer times for a specific date
-   * Returns fallback data if API is unavailable
+   * Returns fallback data jika API tidak tersedia
    */
-  static async getPrayerTimesByDate(year: number, month: number, day: number): Promise<PrayerTime> {
+  static async getPrayerTimesByDate(
+    year: number,
+    month: number,
+    day: number,
+  ): Promise<PrayerTime> {
     try {
-      const formattedDate = `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
-      
-      // Set a timeout for the fetch request
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      const formattedDate = `${year}/${month.toString().padStart(2, "0")}/${day.toString().padStart(2, "0")}`;
 
-      const response = await fetch(`${API_BASE_URL}/${CITY_ID}/${formattedDate}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(
+        `${API_BASE_URL}?date=${encodeURIComponent(formattedDate)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+          signal: controller.signal,
         },
-        cache: 'no-cache',
-        signal: controller.signal
-      });
+      );
 
       clearTimeout(timeoutId);
 
@@ -128,7 +135,7 @@ export class PrayerTimesService {
       const data: PrayerScheduleResponse = await response.json();
 
       if (!data.status || !data.data) {
-        throw new Error('Invalid response format');
+        throw new Error("Invalid response format");
       }
 
       return {
@@ -142,8 +149,10 @@ export class PrayerTimesService {
         isya: data.data.jadwal.isya,
       };
     } catch (error) {
-      console.warn('API tidak tersedia, menggunakan jadwal fallback untuk Makassar:', error);
-      // Return fallback data instead of null to prevent errors
+      console.warn(
+        "API tidak tersedia, menggunakan jadwal fallback untuk Makassar:",
+        error,
+      );
       return this.getFallbackPrayerTimes();
     }
   }
@@ -181,23 +190,25 @@ export class PrayerTimesService {
     ];
 
     // Convert prayer times to minutes
-    const prayerMinutes = prayers.map(prayer => {
-      const [hours, minutes] = prayer.time.split(':').map(Number);
+    const prayerMinutes = prayers.map((prayer) => {
+      const [hours, minutes] = prayer.time.split(":").map(Number);
       return {
         ...prayer,
-        minutes: hours * 60 + minutes
+        minutes: hours * 60 + minutes,
       };
     });
 
     // Find next prayer
-    let nextPrayer = prayerMinutes.find(prayer => prayer.minutes > currentTime);
-    
+    let nextPrayer = prayerMinutes.find(
+      (prayer) => prayer.minutes > currentTime,
+    );
+
     // If no prayer found today, next prayer is Subuh tomorrow
     if (!nextPrayer) {
       nextPrayer = {
         name: "Subuh",
         time: prayerTimes.subuh,
-        minutes: prayerMinutes[0].minutes + (24 * 60) // Add 24 hours
+        minutes: prayerMinutes[0].minutes + 24 * 60, // Add 24 hours
       };
     }
 
@@ -213,8 +224,8 @@ export class PrayerTimesService {
       timeRemaining: {
         hours: hours,
         minutes: minutes,
-        seconds: seconds
-      }
+        seconds: seconds,
+      },
     };
   }
 
@@ -234,9 +245,9 @@ export class PrayerTimesService {
     ];
 
     for (const prayer of prayers) {
-      const [hours, minutes] = prayer.time.split(':').map(Number);
+      const [hours, minutes] = prayer.time.split(":").map(Number);
       const prayerMinutes = hours * 60 + minutes;
-      
+
       if (currentTime >= prayerMinutes) {
         return prayer.name;
       }

@@ -38,7 +38,7 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
                 Transparansi Keuangan Masjid
               </h2>
               <p className="mb-12 text-base !leading-relaxed text-body-color dark:text-body-color-dark sm:text-lg md:text-xl">
-                Kami berkomitmen untuk transparansi dalam pengelolaan keuangan masjid. 
+                Kami berkomitmen untuk transparansi dalam pengelolaan keuangan masjid.
                 Berikut adalah laporan keuangan terkini untuk kepercayaan jamaah.
               </p>
             </div>
@@ -54,11 +54,11 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
               <div className="rounded bg-white/20 p-3">
                 <p className="opacity-90">Total Pemasukan</p>
-                <p className="text-xl font-semibold">{formatRupiah(saldoData.totalPemasukan)}</p>
+                <p className="text-lg font-semibold sm:text-xl md:text-2xl">{formatRupiah(saldoData.totalPemasukan)}</p>
               </div>
               <div className="rounded bg-white/20 p-3">
                 <p className="opacity-90">Total Pengeluaran</p>
-                <p className="text-xl font-semibold">{formatRupiah(saldoData.totalPengeluaran)}</p>
+                <p className="text-lg font-semibold sm:text-xl md:text-2xl">{formatRupiah(saldoData.totalPengeluaran)}</p>
               </div>
             </div>
           </div>
@@ -68,53 +68,48 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
             <div className="flex flex-wrap rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
               <button
                 onClick={() => setActiveTab("saldo")}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-                  activeTab === "saldo"
-                    ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                }`}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === "saldo"
+                  ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
               >
                 Ringkasan
               </button>
               <button
                 onClick={() => setActiveTab("pemasukan")}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-                  activeTab === "pemasukan"
-                    ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                }`}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === "pemasukan"
+                  ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
               >
                 Pemasukan
               </button>
               <button
                 onClick={() => setActiveTab("pengeluaran")}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-                  activeTab === "pengeluaran"
-                    ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                }`}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === "pengeluaran"
+                  ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
               >
                 Pengeluaran
               </button>
               <button
                 onClick={() => setActiveTab("donatur")}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-                  activeTab === "donatur"
-                    ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                }`}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === "donatur"
+                  ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
               >
                 Donatur
               </button>
               <button
                 onClick={() => setActiveTab("info")}
-                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-                  activeTab === "info"
-                    ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                }`}
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${activeTab === "info"
+                  ? "bg-white text-primary shadow-sm dark:bg-gray-700 dark:text-white"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
               >
-                Informasi
+                Laporan Keuangan Jum&apos;at
               </button>
             </div>
           </div>
@@ -292,7 +287,7 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
                       Transparansi Keuangan
                     </h5>
                     <p className="text-sm text-primary dark:text-primary">
-                      Semua dana yang masuk dikelola dengan amanah dan transparan. 
+                      Semua dana yang masuk dikelola dengan amanah dan transparan.
                       Laporan keuangan lengkap dapat dilihat di halaman khusus saldo masjid.
                     </p>
                   </div>
@@ -301,7 +296,7 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
                       Cara Berdonasi
                     </h5>
                     <p className="text-sm text-green-700 dark:text-green-300">
-                      Jamaah dapat berinfaq melalui kotak amal yang tersedia di masjid 
+                      Jamaah dapat berinfaq melalui kotak amal yang tersedia di masjid
                       atau melalui transfer bank untuk donasi khusus.
                     </p>
                   </div>
@@ -310,7 +305,7 @@ const SaldoClient = ({ saldoData }: SaldoClientProps) => {
                       Penggunaan Dana
                     </h5>
                     <p className="text-sm text-purple-700 dark:text-purple-300">
-                      Dana digunakan untuk operasional masjid, kegiatan dakwah, 
+                      Dana digunakan untuk operasional masjid, kegiatan dakwah,
                       pemeliharaan fasilitas, dan program sosial kemasyarakatan.
                     </p>
                   </div>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const AboutPage = () => {
-  return (
+  return ( 
     <main>
       <Breadcrumb pageName="Tentang Kami" />
       <About />
